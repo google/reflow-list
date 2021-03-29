@@ -1,0 +1,24 @@
+{
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "extends": "eslint:recommended",
+    "rules": {
+        "@typescript-eslint/naming-convention": "warn",
+        "@typescript-eslint/semi": "error",
+        "curly": "off",
+        "eqeqeq": [
+            "error",
+            "always"
+        ],
+        "no-throw-literal": "warn",
+        "no-undef": "off",
+        "semi": "error"
+    }
+}
