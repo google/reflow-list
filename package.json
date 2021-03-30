@@ -1,19 +1,23 @@
 {
   "name": "reflowlist",
-  "displayName": "ReflowList",
-  "description": "Reflows text, handling lists cleanly.",
-  "version": "0.0.1",
-  "publisher": "garyrholt",
+  "version": "0.4",
+  "publisher": "google",
   "engines": {
     "vscode": "^1.46.0"
   },
+  "license": "Apache-2.0",
+  "displayName": "ReflowList",
+  "description": "Reflows text, handling lists cleanly.",
+  "homepage": "http://github.com/google/reflow-list",
+  "repository": "https://github.com/google/reflow-list",
   "categories": [
-    "Other"
+     "Formatters"
   ],
+  "keywords": ["reflow", "reformat", "paragraph", "bulleted list", "numbered list"],
+  "main": "./out/extension.js",
   "activationEvents": [
     "onCommand:reflowlist.reflowParagraph"
   ],
-  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -43,6 +47,11 @@
           "type": "integer",
           "default": 80,
           "description": "What column to wrap at."
+        },
+        "reflowlist.extraIndentForDescriptionList": {
+          "type": "integer",
+          "default": 2,
+          "description": "Extra indent for the second line of a description list element."
         }
       }
     }

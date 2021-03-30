@@ -18,7 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
   // Use the console to output diagnostic information (console.log) and errors
   // (console.error) This line of code will only be executed once when your
   // extension is activated
-  console.log('"reflowlist" is now active!');
+  console.log('"reflowlist" is now active');
 
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
@@ -50,7 +50,9 @@ class ReflowBuilder {
       private readonly commentRegExp: RegExp,
       private readonly listRegExp: RegExp,
       private readonly additionalParagraphEndings: RegExp,
-      private readonly wrapColumn: number, currentLine: string) {
+      private readonly wrapColumn: number,
+      private readonly extraIndentForDescriptionList: number,
+      currentLine: string) {
     this.firstLinePrefix = '';
     this.foundBegin = false;
     this.foundEnd = false;
@@ -61,7 +63,7 @@ class ReflowBuilder {
     if (definitionElement) {
       this.foundBegin = true;
       this.firstLinePrefix = this.linePrefix + definitionElement;
-      this.linePrefix += '  ';
+      this.linePrefix += ' '.repeat(this.extraIndentForDescriptionList);
     } else if (listElement) {
       this.foundBegin = true;
       this.firstLinePrefix = prefix + listElement;
@@ -69,6 +71,10 @@ class ReflowBuilder {
     } else {
       this.linePrefix = prefix;
       this.firstLinePrefix = prefix;
+      if (rest === '') {
+        this.foundBegin = true;
+        this.foundEnd = true;
+      }
     }
     this.text = rest;
   }
@@ -189,16 +195,15 @@ class ReflowBuilder {
     return result;
   }
 
-  // Where we build the text we are reflowing.  This is all the text, with
+  // Where we build the text we are reflowing. This is all the text, with
   // preceding comments/whitespace/list elements and newlines removed.
   private text: string;
 
-  // The prefix of the first line.  This would be the leading comment
-  // indicators, if any, followed by a list element or a definition begin, if
-  // any.
+  // The prefix of the first line. This would be the leading comment indicators,
+  // if any, followed by a list element or a definition begin, if any.
   private firstLinePrefix: string;
 
-  // The prefix of subsequent lines.  This would be the leading comment
+  // The prefix of subsequent lines. This would be the leading comment
   // indicators, if any, followed by enough whitespace so it is the same length
   // as firstLinePrefix.
   private linePrefix: string;
@@ -212,8 +217,8 @@ class ReflowBuilder {
 
 function reflowParagraph(
     editor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
-  // Get our regular expressions.  These are sticky, i.e., they only match at
-  // the beginning of the string (because lastIndex starts out at 0).
+  // Get our regular expressions. These are sticky, i.e., they only match at the
+  // beginning of the string (because lastIndex starts out at 0).
   const config = vscode.workspace.getConfiguration('reflowlist');
 
   let rbuilder = new ReflowBuilder(
@@ -222,6 +227,7 @@ function reflowParagraph(
       new RegExp(
           '^' + config.get<string>('additionalParagraphEndings') as string),
       config.get<number>('wrapColumn') as number,
+      config.get<number>('extraIndentForDescriptionList') as number,
       editor.document.lineAt(editor.selection.active).text);
 
   // Go up until we find the beginning of this paragraph.

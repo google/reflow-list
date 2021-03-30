@@ -1,9 +1,7 @@
 # Change Log
 
-All notable changes to the "reflowlist" extension will be documented in this file.
+All notable changes to the "reflowList" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [0.4] - 2021-04
 
-## [Unreleased]
-
-- Initial release
+Initial release.

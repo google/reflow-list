@@ -2,7 +2,8 @@
 
 reflowList is an extension for reflowing (wrapping) text that might have lists,
 whether numeric lists, bulletted lists, or definition lists. It correctly
-handles comments in most languages.
+handles comments in most languages. It is designed primarily for reflowing
+comments in code.
 
 ## Features
 
@@ -13,41 +14,33 @@ the reformatting.
 is defined as lines that have a common prefix and the same indentation.
 
 reflowlist understands bulletted lists (marked by '-' or 'o'), numbered or
-lettered lists ("1.", "a.", "1)", "a)"), and definition lists.  For example,
+lettered lists ("1.", "a.", "1)", "a)"), and definition lists. If the list
+element extends more than one line, the subsequent lines are indented properly.
 
-    // 1. First, do step one (eins, uno,
-    //    etc.).
-    // 2. Then, do step 2.
+This is best shown by example:
 
-    # - Bleah
-    # - Blah
-    # - Blast
-
-Definition lists (a single word followed by a colon) are particularly suitable
-for explaining parameters to functions:
-
-    Arguments:
-      arg1: This is a a pretty important
-        argument that you had better get
-        right.
-      arg2: This is a less important
-        argument....
+![reflow animation](reflow_animation.gif)
 
 ## Extension Settings
 
+If you need to support other programming languages or other definitions, you can adjust the regular expressions that reflowList uses to find comments.
+
+You can also adjust the
 You can adjust the regular expressions that reflowlist uses to find comments and
 lists and definition lists. You can also adjust the `wrapColumn` (the column at
 which text is wrapped). (This is how the above examples were formatted.)
 
 ## Known Issues
 
-reflowlist may incorrectly think that a line that begins with a word followed by
-a colon is the first line of a definition list. This is a hazard; it was not
-obvious how to make it support definition lists without occasionally seeing them
-in the wrong place.
+reflowList may incorrectly think that a line that begins with a word followed by
+a colon is the first line of a definition list. This is a hazard of supporting
+definition lists; it was not obvious how to make it support definition lists
+without occasionally seeing them in the wrong place.
+
+reflowList does not support paragraphs where the first line is indented or
+out-dented; it assumes that any lines with different indentation belong to a
+different paragraph. This is normally what you want when editing code.
 
 ## Release Notes
 
-### 0.0.1
-
-First attempt.
+### 0.4
