@@ -1,6 +1,6 @@
 {
   "name": "reflowlist",
-  "version": "0.4",
+  "version": "0.5.1",
   "publisher": "google",
   "engines": {
     "vscode": "^1.46.0"
@@ -30,18 +30,23 @@
       "properties": {
         "reflowlist.commentRegexp": {
           "type": "string",
-          "default": "\\s*(?://|\\*|/\\*|#)",
-          "description": "Regular expression matching comments to reformat."
+          "default": "^\\s*(?://|#)",
+          "description": "Regular expression matching comments to reformat.  This does not include ' * ' for multiline /* ... */ comments; these are handled separately."
         },
         "reflowlist.listStartRegexp": {
           "type": "string",
-          "default": "(-|o|[a-zA-Z][.)]|\\d+[.)])\\s",
-          "description": "Regular expression matching list begin elements."
+          "default": "^(-|o|:|\\*|[a-zA-Z][.)]|\\d+[.)])\\s+",
+          "description": "Regular expression matching list begin elements.  The regular expression matches after a leading comment + whitespace have been removed.  This should end with a trailing \\s+."
         },
-        "reflowlist.additionalParagraphEndings": {
+        "reflowlist.additionalParagraphEndingsRegexp": {
           "type": "string",
-          "default": "'''|\"\"\"|{|}",
-          "description": "Additional strings (besides changes in whitespace) that imply end of a paragraph."
+          "default": "^'''|\"\"\"|{|}",
+          "description": "Additional strings (besides changes in whitespace) that imply end of a paragraph.  The regular expression matches after a leading comment + whitespace have been removed."
+        },
+        "reflowlist.definitionListRegexp": {
+          "type": "string",
+          "default": "^(?:@\\w+\\s+\\S+|\\w+:)\\s+",
+          "description": "Regular expression matching the start of a definition list.  Any leading comment + whitespace have been removed."
         },
         "reflowlist.wrapColumn": {
           "type": "integer",

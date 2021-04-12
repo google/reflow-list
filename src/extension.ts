@@ -27,6 +27,76 @@ export function activate(context: vscode.ExtensionContext) {
       'reflowlist.reflowParagraph', reflowParagraph));
 }
 
+// Convert tabs to spaces in a string.
+export function tabsToSpaces(text: string, tabSize: number): string {
+  for (let match = /\t/.exec(text); match; match = /\t/.exec(text)) {
+    const nextTabPos = tabSize * (1 + Math.floor(match.index / tabSize));
+    text = text.substr(0, match.index) +
+        ' '.repeat(nextTabPos - match.index) +
+        text.substr(match.index + 1);
+  }
+  return text;
+}
+
+// Determines if we are in the middle of a multi-line /* ... */ style comment.
+// If the current line begins with ' * ', we look backwards until we either stop
+// seeing lines that begin with ' * ' or we see a '/*'. We could look forward
+// for the closing */, too, but it seems not unlikely that a user might be
+// entering a commend and not have added it yet.
+function inMultiLineStarSlashComment(
+    document: vscode.TextDocument, line: number): boolean {
+  if (!/^\s*\*\s+/.test(document.lineAt(line).text)) return false;
+
+  // Look backwards until we find a /* or no more lines beginning with ' * '.
+  while (line > 0) {
+    --line;
+    const lineText = document.lineAt(line).text;
+    if (/^\s*\/\*/.test(lineText)) return true;
+    if (!/^\s*\*\s+/.test(lineText)) return false;
+  }
+  return false;
+}
+
+// This is a bag of data that holds the parameters we fetch from the extension
+// config.  There are a bunch of them; this class fetches them all at once.
+class ReflowParameters {
+  constructor() {
+    const config = vscode.workspace.getConfiguration('reflowlist');
+    const comment = config.get<string>('commentRegexp') as string;
+    const listStart = config.get<string>('listStartRegexp') as string;
+    const additionalParagraphEndings =
+        config.get<string>('additionalParagraphEndingsRegexp') as string;
+    const definitionList = config.get<string>('definitionListRegexp') as string;
+    if (!comment.startsWith('^') || !listStart.startsWith('^') ||
+        !additionalParagraphEndings.startsWith('^') ||
+        !definitionList.startsWith('^')) {
+      throw new Error('All reflowList regular expressions must begin with ^');
+    }
+    if (!listStart.endsWith('\\s+') || !definitionList.endsWith('\\s+')) {
+      throw new Error(
+          'listStartRegexp and definitionListRegexp must end with \\s+');
+    }
+
+    this.commentMatcher = new RegExp(comment);
+    this.listStartMatcher = new RegExp(listStart);
+    this.additionalParagraphEndingsMatcher =
+        new RegExp(additionalParagraphEndings);
+    this.definitionListMatcher = new RegExp(definitionList);
+    this.wrapColumn = config.get<number>('wrapColumn') as number;
+    this.extraIndentForDescriptionList =
+        config.get<number>('extraIndentForDescriptionList') as number;
+    this.tabSize = vscode.workspace.getConfiguration('editor').get<number>(
+                       'tabSize') as number;
+  }
+  public commentMatcher: RegExp;
+  public listStartMatcher: RegExp;
+  public additionalParagraphEndingsMatcher: RegExp;
+  public definitionListMatcher: RegExp;
+  public wrapColumn: number;
+  public extraIndentForDescriptionList: number;
+  public tabSize: number;
+}
+
 // Holds intermediate data while we are building the text to reflow.
 //
 // Typical usage:
@@ -39,6 +109,10 @@ export function activate(context: vscode.ExtensionContext) {
 //    }
 //    replaceLinesBy(rbuilder.ReflowedLines());
 class ReflowBuilder {
+  // Public data members. Since there are so many of these, they are public so
+  // they can be set up by using their names, and we don't have to have a
+  // constructor with many arguments.
+
   // Constructor.  Arguments are:
   //
   // commentRegExp: the regular expression that matches a comment at beginning
@@ -46,13 +120,7 @@ class ReflowBuilder {
   // listRegExp: A regular expression
   //   that matches a list element after the comment (if any).  Should be
   //   prefixed with '^'.
-  constructor(
-      private readonly commentRegExp: RegExp,
-      private readonly listRegExp: RegExp,
-      private readonly additionalParagraphEndings: RegExp,
-      private readonly wrapColumn: number,
-      private readonly extraIndentForDescriptionList: number,
-      currentLine: string) {
+  constructor(private readonly params: ReflowParameters, currentLine: string) {
     this.firstLinePrefix = '';
     this.foundBegin = false;
     this.foundEnd = false;
@@ -63,7 +131,7 @@ class ReflowBuilder {
     if (definitionElement) {
       this.foundBegin = true;
       this.firstLinePrefix = this.linePrefix + definitionElement;
-      this.linePrefix += ' '.repeat(this.extraIndentForDescriptionList);
+      this.linePrefix += ' '.repeat(this.params.extraIndentForDescriptionList);
     } else if (listElement) {
       this.foundBegin = true;
       this.firstLinePrefix = prefix + listElement;
@@ -82,14 +150,16 @@ class ReflowBuilder {
   // Parse a line.  Returns a four-element array:
   // 0: The comment + whitespace prefix.
   // 1: The definition list begin (i.e., what's before ';') if any.
-  // 1: The list element, if any, plus following whitespace.  (This would only
-  //    be for the first line.) 2: The text that needs to be reflowed.
+  // 2: The list element, if any, plus following whitespace. (This would only
+  //    be for the first line.)
+  // 3: The text that needs to be reflowed.
   parseLine(line: string): string[] {
     // Pull off a leading comment.
     let prefix: string = '';
     let definitionElement: string = '';
     let listElement: string = '';
-    const commentMatch = this.commentRegExp.exec(line);
+    line = tabsToSpaces(line, this.params.tabSize);
+    const commentMatch = this.params.commentMatcher.exec(line);
     if (commentMatch) {
       prefix = commentMatch[0];
       line = line.substring(prefix.length);
@@ -103,21 +173,16 @@ class ReflowBuilder {
     }
 
     // Pull off a list element or a definition, if present.
-    const definitionMatch = /^\w+:\s+/.exec(line);
+    const definitionMatch = this.params.definitionListMatcher.exec(line);
     if (definitionMatch) {
       definitionElement = definitionMatch[0];
       line = line.substring(definitionElement.length);
     } else {
       // We did not find a definition.  See if we found a list element.
-      const listBeginMatch = this.listRegExp.exec(line);
+      const listBeginMatch = this.params.listStartMatcher.exec(line);
       if (listBeginMatch) {
         listElement = listBeginMatch[0];
         line = line.substring(listElement.length);
-        whitespaceMatch = /^\s+/.exec(line);
-        if (whitespaceMatch) {
-          listElement += whitespaceMatch[0];
-          line = line.substring(whitespaceMatch[0].length);
-        }
       }
     }
 
@@ -134,7 +199,7 @@ class ReflowBuilder {
 
     const [prefix, definitionElement, listElement, rest] = this.parseLine(line);
     if (rest === '') return false;
-    if (this.additionalParagraphEndings.test(rest)) return false;
+    if (this.params.additionalParagraphEndingsMatcher.test(rest)) return false;
     if (definitionElement) {
       // Check for different indentation.
       if (this.linePrefix !== prefix + '  ') return false;
@@ -163,7 +228,7 @@ class ReflowBuilder {
 
     const [prefix, definitionElement, listElement, rest] = this.parseLine(line);
     if (rest === '') return false;
-    if (this.additionalParagraphEndings.test(rest)) return false;
+    if (this.params.additionalParagraphEndingsMatcher.test(rest)) return false;
     if (definitionElement || listElement) return false;
     if (prefix !== this.linePrefix) return false;
 
@@ -183,7 +248,7 @@ class ReflowBuilder {
         result += word;
         column += word.length;
         firstWord = false;
-      } else if (column + 1 + word.length > this.wrapColumn) {
+      } else if (column + 1 + word.length > this.params.wrapColumn) {
         result += '\n' + this.linePrefix + word;
         column = this.linePrefix.length + word.length;
       } else {
@@ -217,18 +282,18 @@ class ReflowBuilder {
 
 function reflowParagraph(
     editor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
-  // Get our regular expressions. These are sticky, i.e., they only match at the
-  // beginning of the string (because lastIndex starts out at 0).
-  const config = vscode.workspace.getConfiguration('reflowlist');
+  // Get our regular expressions.
+  let params = new ReflowParameters();
+
+  // If we're in a multi-line /* ... */ comment, then '*' is a comment
+  // character. Otherwise, '*' is something that begins a list.
+  if (inMultiLineStarSlashComment(
+          editor.document, editor.selection.active.line)) {
+    params.commentMatcher = /^\s*\*/;
+  }
 
   let rbuilder = new ReflowBuilder(
-      new RegExp('^' + config.get<string>('commentRegexp') as string),
-      new RegExp('^' + config.get<string>('listStartRegexp') as string),
-      new RegExp(
-          '^' + config.get<string>('additionalParagraphEndings') as string),
-      config.get<number>('wrapColumn') as number,
-      config.get<number>('extraIndentForDescriptionList') as number,
-      editor.document.lineAt(editor.selection.active).text);
+      params, editor.document.lineAt(editor.selection.active).text);
 
   // Go up until we find the beginning of this paragraph.
   let firstLine: vscode.Position = editor.selection.active.with(undefined, 0);

@@ -1,0 +1,37 @@
+This file illustrates what reflowList can do to badly formatted text.  ReflowList finds the paragraph around the cursor
+and reformats it.
+For this illustration, the wrap column was set to 60.
+
+   // This is in a C++/Java/Javascript/Typescript comment.  blah blah blah.
+   //   An indented paragraph.  ReflowList won't confuse paragraphs with different indentations.
+   //
+   //   It also supports lists:
+   //   1.  Lists can be numeric, as
+   //       shown here.
+   //   2.  They can also be alphabetic, e.g., like this nested list:
+   //      a) Parenthesis or periods may follow the list marker.
+   //      B. This is an alphabetic list element.
+   // To make this really useful, you should bind reflowList.reflowParagraph to some key.
+
+   # This is in a python/perl/whatever comment.  It also shows a different kind of list.
+   # - reflowList handles bulleted lists.
+   #   The second line of each list element is correctly indented and wrapped.
+   # o The list marker may be '-' or 'o', followed by a space.  This is customizable.
+
+  """A python comment
+
+  ReflowList also supports description lists, which are particularly handy for function argument documentation.
+
+  Args:
+    arg1: This is a special argument.
+      Text can be wrapped; subsequent lines are indented extra spaces.
+    arg2: This is another argument with some text that will wrap.
+  """
+  def my_python_function(...):
+
+/*
+ * A javascript/java function
+ * @param arg1  Javadoc comments are flowed as description lists with the next line indented
+ *   like this.
+ * @param arg2:  Some people end their params with a :.  ReflowList doesn't care.
+ */

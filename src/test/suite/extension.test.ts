@@ -14,6 +14,24 @@
 
 import assert = require('assert');
 import * as vscode from 'vscode';
+import { tabsToSpaces } from '../../extension';
+
+suite('Tabs to spaces suite', () => {
+  test('2 column tabs', (done) => {
+    assert.strictEqual(tabsToSpaces('\t\tx', 2), '    x');
+    done();
+  });
+
+  test('4 column tabs', (done) => {
+    assert.strictEqual(tabsToSpaces('\t\tx', 4), '        x');
+    done();
+  });
+
+  test('4 column tabs, not tab aligned', (done) => {
+    assert.strictEqual(tabsToSpaces('\ty\tx', 4), '    y   x');
+    done();
+  });
+});
 
 // Takes an initial buffer and a line number, runs reflow on it, and verifies
 // that we get the expected string.
@@ -107,6 +125,52 @@ param2: more text`,
         done);
   });
 
+  test('C++ comment', (done) => {
+    reflowDocument(
+        `
+    // some text
+    // which needs wrapping
+    //   othertext`,
+        1, `
+    // some text which needs wrapping
+    //   othertext`,
+        done);
+  });
+
+  test('Javadoc comment', (done) => {
+    reflowDocument(`
+   /*
+    * @param xyz   this is a parameter with some descriptive text which is too long for one line
+    *   and some more on the next line`, 2, `
+   /*
+    * @param xyz   this is a parameter with some descriptive text which is too
+    *   long for one line and some more on the next line
+`, done);
+  });
+
+  test('Markdown definition list', (done) => {
+    reflowDocument(`
+A grandiose topic
+:  Some pedantic words that do not do the grandiose topic justice, and which are badly formatted.
+:  Some more pedantic words.`, 2, `
+A grandiose topic
+:  Some pedantic words that do not do the grandiose topic justice, and which are
+   badly formatted.
+:  Some more pedantic words.`, done);
+  });
+
+  test('Python comment', (done) => {
+    reflowDocument(
+        `
+    # a beautiful description
+    # of a clever algorithm
+    #    with some indented stuff`,
+        1, `
+    # a beautiful description of a clever algorithm
+    #    with some indented stuff`,
+        done);
+  });
+
   // Test whether it stops at the triple-quote delimeted python comments.
   test('Python long comment', (done) => {
     reflowDocument(
@@ -126,27 +190,26 @@ param2: more text`,
         done);
   });
 
-  test('C++ comment', (done) => {
-    reflowDocument(
-        `
-    // some text
-    // which needs wrapping
-    //   othertext`,
-        1, `
-    // some text which needs wrapping
-    //   othertext`,
-        done);
+  test(' * as list marker', (done) => {
+    reflowDocument(`
+  some text
+   * list element
+     blah
+   * another list element`, 2, `
+  some text
+   * list element blah
+   * another list element`, done);
   });
 
-  test('Python comment', (done) => {
-    reflowDocument(
-        `
-    # a beautiful description
-    # of a clever algorithm
-    #    with some indented stuff`,
-        1, `
-    # a beautiful description of a clever algorithm
-    #    with some indented stuff`,
-        done);
+  test(' * as multi line /* comment */', (done) => {
+    reflowDocument(`
+    /*
+     * some text
+     * that needs to be reflowed.
+     */`, 2, `
+    /*
+     * some text that needs to be reflowed.
+     */`, done);
   });
+
 });
