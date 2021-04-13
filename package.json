@@ -1,6 +1,6 @@
 {
   "name": "reflowlist",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "publisher": "google",
   "engines": {
     "vscode": "^1.46.0"
@@ -40,7 +40,7 @@
         },
         "reflowlist.additionalParagraphEndingsRegexp": {
           "type": "string",
-          "default": "^'''|\"\"\"|{|}",
+          "default": "^(```|'''|\"\"\"|{|})",
           "description": "Additional strings (besides changes in whitespace) that imply end of a paragraph.  The regular expression matches after a leading comment + whitespace have been removed."
         },
         "reflowlist.definitionListRegexp": {

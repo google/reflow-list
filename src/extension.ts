@@ -144,6 +144,12 @@ class ReflowBuilder {
         this.foundEnd = true;
       }
     }
+
+    // If we're on the ''' or ``` line, don't reflow at all.
+    if (this.params.additionalParagraphEndingsMatcher.test(rest)) {
+      this.foundBegin = true;
+      this.foundEnd = true;
+    }
     this.text = rest;
   }
 
