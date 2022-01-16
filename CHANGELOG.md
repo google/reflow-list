@@ -2,6 +2,10 @@
 
 All notable changes to the "reflowList" extension will be documented in this file.
 
+## [0.6] - 2022-01
+
+Make this a web extension so it works better with code-server and vscode.dev.
+
 ## [0.5] - 2021-04
 
 - Support Javadoc and markdown definition lists.
