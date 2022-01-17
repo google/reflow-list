@@ -1,1 +1,0 @@
-../../../test/suite/extension.test.ts
