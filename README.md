@@ -24,7 +24,9 @@ This is best shown by example:
 ## Extension Settings
 
 If you need to support other programming languages or other definitions, you can
-adjust the regular expressions that reflowList uses to find comments.
+adjust the regular expressions that reflowList uses to find comments. The
+regular expressions or wrap columns can be changed on a per-language or
+per-workspace basis following the usual vscode conventions.
 
 You can adjust the regular expressions that reflowlist uses to find comments and
 lists and definition lists. You can also adjust the `wrapColumn` (the column at

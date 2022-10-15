@@ -1,6 +1,6 @@
 {
   "name": "reflowlist",
-  "version": "0.6.1",
+  "version": "0.7.1",
   "publisher": "google",
   "engines": {
     "vscode": "^1.46.0"
@@ -20,9 +20,11 @@
     "bulleted list",
     "numbered list"
   ],
-  "main": "./out/extension.js",
   "browser": "./dist/web/extension.js",
-  "extensionKind": ["ui", "workspace"],
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
   "activationEvents": [
     "onCommand:reflowlist.reflowParagraph"
   ],
@@ -101,6 +103,6 @@
     "nodejs": "^0.0.0",
     "process": "^0.11.10",
     "ts-loader": "^9.2.6",
-    "vsce": "^2.6.3"
+    "vsce": "^2.11.0"
   }
 }

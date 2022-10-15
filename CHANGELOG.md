@@ -2,6 +2,10 @@
 
 All notable changes to the "reflowList" extension will be documented in this file.
 
+## [0.7] - 2022-10
+
+Support per-language configs.
+
 ## [0.6] - 2022-01
 
 Make this a web extension so it works better with code-server and vscode.dev.
