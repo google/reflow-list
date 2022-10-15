@@ -60,8 +60,8 @@ function inMultiLineStarSlashComment(
 // This is a bag of data that holds the parameters we fetch from the extension
 // config.  There are a bunch of them; this class fetches them all at once.
 class ReflowParameters {
-  constructor() {
-    const config = vscode.workspace.getConfiguration('reflowlist');
+  constructor(scope: vscode.ConfigurationScope) {
+    const config = vscode.workspace.getConfiguration('reflowlist', scope);
     const comment = config.get<string>('commentRegexp') as string;
     const listStart = config.get<string>('listStartRegexp') as string;
     const additionalParagraphEndings =
@@ -289,7 +289,7 @@ class ReflowBuilder {
 function reflowParagraph(
     editor: vscode.TextEditor, edit: vscode.TextEditorEdit): void {
   // Get our regular expressions.
-  let params = new ReflowParameters();
+  let params = new ReflowParameters(editor.document);
 
   // If we're in a multi-line /* ... */ comment, then '*' is a comment
   // character. Otherwise, '*' is something that begins a list.
