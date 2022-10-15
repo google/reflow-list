@@ -1,7 +1,7 @@
 # reflowlist
 
 reflowList is an extension for reflowing (wrapping) text that might have lists,
-whether numeric lists, bulletted lists, or definition lists. It correctly
+whether numeric lists, bulleted lists, or definition lists. It correctly
 handles comments in most languages. It is designed primarily for reflowing
 comments in code.
 
@@ -13,7 +13,7 @@ the reformatting.
 `reflowParagraph` reformats the paragraph around the cursor, where "paragraph"
 is defined as lines that have a common prefix and the same indentation.
 
-reflowlist understands bulletted lists (marked by '-' or 'o'), numbered or
+reflowlist understands bulleted lists (marked by '-' or 'o'), numbered or
 lettered lists ("1.", "a.", "1)", "a)"), and definition lists. If the list
 element extends more than one line, the subsequent lines are indented properly.
 
