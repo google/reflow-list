@@ -1,6 +1,6 @@
 {
   "name": "reflowlist",
-  "version": "0.7.1",
+  "version": "0.8.1",
   "publisher": "google",
   "engines": {
     "vscode": "^1.46.0"
@@ -21,10 +21,6 @@
     "numbered list"
   ],
   "browser": "./dist/web/extension.js",
-  "extensionKind": [
-    "ui",
-    "workspace"
-  ],
   "activationEvents": [
     "onCommand:reflowlist.reflowParagraph"
   ],
@@ -60,8 +56,8 @@
         },
         "reflowlist.wrapColumn": {
           "type": "integer",
-          "default": 80,
-          "description": "What column to wrap at."
+          "default": 0,
+          "description": "What column to wrap at.  If 0, then we use editor.wordWrapColumn."
         },
         "reflowlist.extraIndentForDescriptionList": {
           "type": "integer",
@@ -103,6 +99,6 @@
     "nodejs": "^0.0.0",
     "process": "^0.11.10",
     "ts-loader": "^9.2.6",
-    "vsce": "^2.11.0"
+    "vsce": "^2.15.0"
   }
 }

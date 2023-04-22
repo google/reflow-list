@@ -2,6 +2,11 @@
 
 All notable changes to the "reflowList" extension will be documented in this file.
 
+## [0.8] - 2023-04
+
+Fall back to the editor.wrapColumn setting if reflowlist.wordWrapColumn isn't
+set.
+
 ## [0.7] - 2022-10
 
 Support per-language configs.

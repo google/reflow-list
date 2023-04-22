@@ -83,6 +83,11 @@ class ReflowParameters {
         new RegExp(additionalParagraphEndings);
     this.definitionListMatcher = new RegExp(definitionList);
     this.wrapColumn = config.get<number>('wrapColumn') as number;
+    if (this.wrapColumn === 0) {
+      // The wrap column wasn't specified, so default to editor.wordWrapColumn.
+      const editorConfig = vscode.workspace.getConfiguration('editor', scope)
+      this.wrapColumn = editorConfig.get<number>('wordWrapColumn') as number;
+    }
     this.extraIndentForDescriptionList =
         config.get<number>('extraIndentForDescriptionList') as number;
     this.tabSize = vscode.workspace.getConfiguration('editor').get<number>(
