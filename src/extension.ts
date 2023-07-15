@@ -86,7 +86,8 @@ class ReflowParameters {
     if (this.wrapColumn === 0) {
       // The wrap column wasn't specified, so default to editor.wordWrapColumn.
       const editorConfig = vscode.workspace.getConfiguration('editor', scope)
-      this.wrapColumn = editorConfig.get<number>('wordWrapColumn') as number;
+      this.wrapColumn = editorConfig.get('rulers', [])[0] ||
+          (editorConfig.get<number>('wordWrapColumn') as number);
     }
     this.extraIndentForDescriptionList =
         config.get<number>('extraIndentForDescriptionList') as number;
