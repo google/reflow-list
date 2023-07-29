@@ -57,7 +57,8 @@
         "reflowlist.wrapColumn": {
           "type": "integer",
           "default": 0,
-          "description": "What column to wrap at.  If 0, then we use editor.wordWrapColumn."
+          "description": "What column to wrap at.  If 0, then we use editor.wordWrapColumn.",
+          "scope": "language-overridable"
         },
         "reflowlist.extraIndentForDescriptionList": {
           "type": "integer",
