@@ -36,7 +36,7 @@
       "properties": {
         "reflowlist.commentRegexp": {
           "type": "string",
-          "default": "^\\s*(?://|#|\\>)",
+          "default": "^\\s*(?://|#|\\>|--)",
           "description": "Regular expression matching comments to reformat.  This does not include ' * ' for multiline /* ... */ comments; these are handled separately."
         },
         "reflowlist.listStartRegexp": {
