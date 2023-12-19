@@ -212,13 +212,21 @@ A grandiose topic
      */`, done);
   });
 
-
   test('markdown block quote', (done) => {
     reflowDocument(`
   > Great quote from some
   > hallowed piece of literature.
   `, 1, `
   > Great quote from some hallowed piece of literature.
+  `, done);
+  });
+
+  test('sql line comments', (done) => {
+    reflowDocument(`
+  -- Great quote from some
+  -- hallowed piece of literature.
+  `, 1, `
+  -- Great quote from some hallowed piece of literature.
   `, done);
   });
 
