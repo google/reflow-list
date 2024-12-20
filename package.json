@@ -7,7 +7,7 @@
   },
   "license": "Apache-2.0",
   "displayName": "ReflowList",
-  "description": "Reflows text, handling lists cleanly.",
+  "description": "Reformats/wraps text, handling lists cleanly.",
   "homepage": "http://github.com/google/reflow-list",
   "repository": "https://github.com/google/reflow-list",
   "categories": [
@@ -17,8 +17,8 @@
     "reflow",
     "reformat",
     "paragraph",
-    "bulleted list",
-    "numbered list"
+    "markdown",
+    "wrap"
   ],
   "browser": "./dist/web/extension.js",
   "activationEvents": [
