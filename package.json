@@ -1,6 +1,6 @@
 {
   "name": "reflowlist",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "publisher": "google",
   "engines": {
     "vscode": "^1.46.0"
@@ -100,6 +100,6 @@
     "nodejs": "^0.0.0",
     "process": "^0.11.10",
     "ts-loader": "^9.2.6",
-    "vsce": "^2.15.0"
+    "vsce": "^1.97.0"
   }
 }
