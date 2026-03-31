@@ -20,6 +20,7 @@
     "markdown",
     "wrap"
   ],
+  "main": "./out/extension.js",
   "browser": "./dist/web/extension.js",
   "activationEvents": [
     "onCommand:reflowlist.reflowParagraph"
