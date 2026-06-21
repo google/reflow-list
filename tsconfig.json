@@ -8,7 +8,9 @@
 		],
 		"sourceMap": true,
 		"rootDir": "src",
-		"strict": true   /* enable all strict type-checking options */
+		"strict": true,   /* enable all strict type-checking options */
+    "skipLibCheck": true,  /* Only check my code, not libraries. */
+    "types": ["node", "vscode"]  /* otherwise we get conflicts between webpack-env and node_models/@types */
 		/* Additional Checks */
 		// "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
 		// "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */

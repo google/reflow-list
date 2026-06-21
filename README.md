@@ -3,7 +3,7 @@
 reflowList is an extension for reflowing (wrapping) text that might have lists,
 whether numeric lists, bulleted lists, or definition lists. It correctly
 handles comments in most languages. It is designed primarily for reflowing
-comments in code.
+paragraph comments in code.
 
 ## Features
 
@@ -14,8 +14,9 @@ the reformatting.
 is defined as lines that have a common prefix and the same indentation.
 
 reflowlist understands bulleted lists (marked by `-` or `o`), numbered or
-lettered lists (`1.`, `a.`, `1)`, `a)`), and definition lists. If the list
-element extends more than one line, the subsequent lines are indented properly.
+lettered lists (`1.`, `a.`, `1)`, `a)`), and definition lists (e.g., argument
+lists of the form `param: paragraph describing param`). If a list element
+extends more than one line, the subsequent lines are indented properly.
 
 This is best shown by example:
 
@@ -25,9 +26,11 @@ This is best shown by example:
 
 By default, the extension should support any language that has comments
 beginning with `#` (perl/python/shell), `//` (C++, go, many other languages),
-`///` (swift), or `--` (SQL). If you need support for another language, just set
-`reflowlist.commentStartRegexp` appropriately. This is a regular vscode setting,
-so it can be controlled on a per-language or per-workspace basis if you desire.
+`///` (swift), or `--` (SQL). It will also support reformatting inside C's `/*
+... */` comments as long as the paragraphs all begin with ` * `. If you need
+support for another language, just set `reflowlist.commentStartRegexp`
+appropriately. This is a regular vscode setting, so it can be controlled on a
+per-language or per-workspace basis if you desire.
 
 `reflowlist.wrapColumn` is how you control the column at which text is wrapped.
 (This is how we produced the examples above, using a smaller `wrapColumn`.) By
@@ -50,7 +53,7 @@ start, etc.
   markdown.
 
 * reflowList converts tabs into spaces. Sorry if you actually wanted hard tabs.
-  Hopefully you have a code reformatted (like gofmt) that can convert back.
+  Hopefully you have a code reformatter (like gofmt) that can convert back.
 
 * reflowList does not attempt to reflow /* comment */ lines where there is text
   on the opening line of the comment, e.g.,
@@ -73,6 +76,8 @@ start, etc.
    */
   ```
 
+* reflowList doesn't even try to support end-of-line comments. (How exactly
+  should we reflow them?)
 
 ## Release Notes
 
