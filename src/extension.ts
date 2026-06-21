@@ -85,7 +85,7 @@ class ReflowParameters {
     this.wrapColumn = config.get<number>('wrapColumn') as number;
     if (this.wrapColumn === 0) {
       // The wrap column wasn't specified, so default to editor.wordWrapColumn.
-      const editorConfig = vscode.workspace.getConfiguration('editor', scope)
+      const editorConfig = vscode.workspace.getConfiguration('editor', scope);
       this.wrapColumn = editorConfig.get('rulers', [])[0] ||
           (editorConfig.get<number>('wordWrapColumn') as number);
     }
