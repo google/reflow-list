@@ -13,8 +13,8 @@ the reformatting.
 `reflowParagraph` reformats the paragraph around the cursor, where "paragraph"
 is defined as lines that have a common prefix and the same indentation.
 
-reflowlist understands bulleted lists (marked by '-' or 'o'), numbered or
-lettered lists ("1.", "a.", "1)", "a)"), and definition lists. If the list
+reflowlist understands bulleted lists (marked by `-` or `o`), numbered or
+lettered lists (`1.`, `a.`, `1)`, `a)`), and definition lists. If the list
 element extends more than one line, the subsequent lines are indented properly.
 
 This is best shown by example:
@@ -23,14 +23,18 @@ This is best shown by example:
 
 ## Extension Settings
 
-If you need to support other programming languages or other definitions, you can
-adjust the regular expressions that reflowList uses to find comments. The
-regular expressions or wrap columns can be changed on a per-language or
-per-workspace basis following the usual vscode conventions.
+By default, the extension should support any language that has comments
+beginning with `#` (perl/python/shell), `//` (C++, go, many other languages),
+`///` (swift), or `--` (SQL). If you need support for another language, just set
+`reflowlist.commentStartRegexp` appropriately. This is a regular vscode setting,
+so it can be controlled on a per-language or per-workspace basis if you desire.
 
-You can adjust the regular expressions that reflowlist uses to find comments and
-lists and definition lists. You can also adjust the `wrapColumn` (the column at
-which text is wrapped). (This is how the above examples were formatted.)
+`reflowlist.wrapColumn` is how you control the column at which text is wrapped.
+(This is how we produced the examples above, using a smaller `wrapColumn`.) By
+default, this is just `editor.wordWrapColumn`.
+
+There are a few configurable regular expressions for list start, definition list
+start, etc.
 
 ## Known Issues
 
@@ -71,6 +75,10 @@ which text is wrapped). (This is how the above examples were formatted.)
 
 
 ## Release Notes
+
+### 0.9.1
+
+More languages, a few bug fixes.
 
 ### 0.5
 
