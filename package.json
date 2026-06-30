@@ -101,6 +101,6 @@
     "nodejs": "^0.0.0",
     "process": "^0.11.10",
     "ts-loader": "^9.2.6",
-    "@vscode/vsce": "^2.15.0"
+    "@vscode/vsce": "^3.9.2"
   }
 }
